@@ -68,9 +68,12 @@ export default class Library {
       resolves[msgId] = resolve
       rejects[msgId] = reject
 
-      const scale = Math.min(this.maxWorkSize / image.naturalWidth, this.maxWorkSize / image.naturalHeight);
-      this.canvas.width = image.naturalWidth * scale;
-      this.canvas.height = image.naturalHeight * scale;
+      const W = image.naturalWidth || image.width
+      const H = image.naturalHeight || image.height
+
+      const scale = Math.min(this.maxWorkSize / W, this.maxWorkSize / H);
+      this.canvas.width = W * scale;
+      this.canvas.height = H * scale;
       
       this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
 

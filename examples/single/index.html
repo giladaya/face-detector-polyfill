@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BarcodeDetector Polyfill Example</title>
+    <title>FaceDetector Polyfill Example</title>
   </head>
   <body>
     <div id="container">
@@ -25,12 +25,12 @@
           };
           document.head.appendChild($script);
         }
-        if ('BarcodeDetector' in window) {
+        if ('FaceDetector' in window) {
           startTheApp();
         } else {
           console.log('Loading polyfill');
           loadScript(
-            "../BarcodeDetector.min.js", 
+            "../FaceDetector.js", 
             startTheApp
           );
         }
@@ -38,24 +38,23 @@
 
       function startTheApp() {
         var takePicture = document.querySelector("#Take-Picture"),
-        showPicture = document.createElement("img");
-        Result = document.querySelector("#textbit");
+          showPicture = document.createElement("img"),
+          Result = document.querySelector("#textbit");
+
         var canvas =document.getElementById("picture");
         var ctx = canvas.getContext("2d");
 
-        if (window.BarcodeDetector == undefined) {
-          window.BarcodeDetector = BarcodeDetector;
-        }
-        var barcodeDetector = new BarcodeDetector();
+        var faceDetector = new FaceDetector({
+          maxDetectedFaces: 100,
+          fastMode: false,
+        });
 
         function handleResults (result) {
           if (result.length > 0){
             ctx.beginPath();
             ctx.lineWIdth = "2";
-            ctx.strokeStyle="red";
-            var tempArray = [];
+            ctx.strokeStyle="#0f0";
             for (var i = 0; i < result.length; i++) {
-              tempArray.push(result[i].rawValue);
               ctx.rect(
                 result[i].boundingBox.x, 
                 result[i].boundingBox.y, 
@@ -63,11 +62,11 @@
                 result[i].boundingBox.height
               );
             }
-            Result.innerHTML = tempArray.join("<br />");
+            Result.innerHTML = 'Found ' + result.length + ' faces';
             ctx.stroke();
           } else {
             if(result.length === 0) {
-              Result.innerHTML = "Decoding failed.";
+              Result.innerHTML = "Found nothing.";
             }
           }
         }
@@ -83,7 +82,7 @@
                   Result.innerHTML="";
                   // JOB.DecodeImage(showPicture);
                   ctx.drawImage(showPicture, 0, 0, canvas.width, canvas.height);
-                  barcodeDetector.detect(showPicture).then(handleResults)
+                  faceDetector.detect(canvas).then(handleResults)
                   URL.revokeObjectURL(showPicture.src);
                 };
                 showPicture.src = URL.createObjectURL(file);
@@ -96,7 +95,7 @@
                       Result.innerHTML="";
                       ctx.drawImage(showPicture, 0, 0, canvas.width, canvas.height);
                       // JOB.DecodeImage(showPicture);
-                      barcodeDetector.detect(showPicture).then(handleResults)
+                      faceDetector.detect(canvas).then(handleResults)
                     };
                     showPicture.src = event.target.result;
                   };
