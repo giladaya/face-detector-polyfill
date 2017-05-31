@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FaceDetector Polyfill Example</title>
+    <style>
+      img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="display"></canvas>
+    <img id="theImage"/>
+    <div id="output">...</div>
+  </body>
+  <script>
+    // window.FaceDetector = function() {
+    //   return {
+    //     detect: function() {return Promise.resolve([])}
+    //   }
+    // }
+  </script>
+  <script>
+    (function () {
+      function loadScript(src, done) {
+        var $script = document.createElement('script');
+        $script.src = src;
+        $script.onload = function() {
+          done();
+        };
+        $script.onerror = function() {
+          done(new Error('Failed to load script ' + src));
+        };
+        document.head.appendChild($script);
+      }
+      if ('FaceDetector' in window) {
+        startTheApp();
+      } else {
+        loadScript(
+          "../FaceDetector.js", 
+          startTheApp
+        );
+      }
+    })()
+
+    function startTheApp() {
+      var $img = document.getElementById('theImage');
+      var $canvas = document.getElementById('display');
+      var $output = document.getElementById('output');
+
+      var imgUrl = 'Aibrgzj8T.jpg';
+      var faceDetector = new FaceDetector({
+        maxDetectedFaces: 100,
+        fastMode: true,
+      });
+
+      // img.crossOrigin = "No CORS";
+      $img.onload = function() {
+        // draw on canvas
+        $canvas.width = $img.naturalWidth
+        $canvas.height = $img.naturalHeight
+        var ctx = $canvas.getContext('2d')
+        ctx.drawImage($img, 0, 0)
+
+        faceDetector.detect($img).then(results => {
+          console.log(results)
+          
+          $output.innerHTML = 'Found ' + results.length + ' faces';
+
+          // draw the results
+          ctx.strokeStyle = 'green'
+          var bb = {}
+          results.forEach(function(res) {
+            bb = res.boundingBox
+            ctx.strokeRect(bb.x, bb.y, bb.width, bb.height)
+          })
+        });
+      }
+      $img.src = imgUrl
+    }
+  </script>
+</html>
