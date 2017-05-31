@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FaceDetector Polyfill Example</title>
     <style>
-      img {
+      canvas {
         max-width: 100%;
       }
     </style>
   </head>
   <body>
     <canvas id="display"></canvas>
-    <img id="theImage"/>
     <div id="output">...</div>
   </body>
   <script>
@@ -46,14 +45,14 @@
     })()
 
     function startTheApp() {
-      var $img = document.getElementById('theImage');
+      var $img = document.createElement('img');
       var $canvas = document.getElementById('display');
       var $output = document.getElementById('output');
 
       var imgUrl = 'Aibrgzj8T.jpg';
       var faceDetector = new FaceDetector({
         maxDetectedFaces: 100,
-        fastMode: true,
+        fastMode: false,
       });
 
       // img.crossOrigin = "No CORS";
@@ -64,13 +63,15 @@
         var ctx = $canvas.getContext('2d')
         ctx.drawImage($img, 0, 0)
 
+        var start = Date.now();
         faceDetector.detect($img).then(results => {
           console.log(results)
           
-          $output.innerHTML = 'Found ' + results.length + ' faces';
+          var time = Date.now() - start;
+          $output.innerHTML = 'Found ' + results.length + ' faces in ' + time +'ms';
 
           // draw the results
-          ctx.strokeStyle = 'green'
+          ctx.strokeStyle = '#0f0'
           var bb = {}
           results.forEach(function(res) {
             bb = res.boundingBox

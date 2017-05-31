@@ -4,9 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FaceDetector Polyfill Example</title>
+    <style>
+      canvas {
+        max-width: 100%;
+      }
+    </style>
   </head>
   <body>
-    <img id="theImage"/>
+    <canvas id="display"></canvas>
     <div id="output">...</div>
   </body>
   <script>
@@ -33,27 +38,45 @@
         startTheApp();
       } else {
         loadScript(
-          "../../dist/FaceDetector.js", 
+          "../FaceDetector.min.js", 
           startTheApp
         );
       }
     })()
 
     function startTheApp() {
-      var $img = document.getElementById('theImage');
+      var $img = document.createElement('img');
+      var $canvas = document.getElementById('display');
       var $output = document.getElementById('output');
 
       var imgUrl = 'Aibrgzj8T.jpg';
-      var FaceDetector = new FaceDetector();
+      var faceDetector = new FaceDetector({
+        maxDetectedFaces: 100,
+        fastMode: false,
+      });
 
       // img.crossOrigin = "No CORS";
       $img.onload = function() {
-        FaceDetector.detect($img).then(results => {
-          str = results.map(function (res) {
-            return res.rawValue
-          }).join(', ');
-          $output.innerHTML = str;
+        // draw on canvas
+        $canvas.width = $img.naturalWidth
+        $canvas.height = $img.naturalHeight
+        var ctx = $canvas.getContext('2d')
+        ctx.drawImage($img, 0, 0)
+
+        var start = Date.now();
+        faceDetector.detect($img).then(results => {
           console.log(results)
+          
+          var time = Date.now() - start;
+          $output.innerHTML = 'Found ' + results.length + ' faces in ' + time +'ms';
+
+          // draw the results
+          ctx.strokeStyle = '#0f0'
+          var bb = {}
+          results.forEach(function(res) {
+            bb = res.boundingBox
+            ctx.strokeRect(bb.x, bb.y, bb.width, bb.height)
+          })
         });
       }
       $img.src = imgUrl

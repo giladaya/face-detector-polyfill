@@ -11,7 +11,7 @@
 // jsfeat.bbf.group_rectangles
 // jsfeat.bbf.face_cascade
 
-var jsfeat = require('./jsfeat');
+var jsfeat = require('./lib/jsfeat');
 var bbfFaceCascade = require('./lib/bbf_face');
 
 let imgU8
@@ -35,7 +35,7 @@ self.onmessage = function (e) {
   const imageData = e.data.image;
   jsfeat.imgproc.grayscale(imageData.data, e.data.width, e.data.height, imgU8);
   // possible options
-  // jsfeat.imgproc.equalize_histogram(imgU8, imgU8);
+  jsfeat.imgproc.equalize_histogram(imgU8, imgU8);
   const pyr = jsfeat.bbf.build_pyramid(imgU8, 24 * 2, 24 * 2, 4);
   let rects = jsfeat.bbf.detect(pyr, bbfFaceCascade);
   rects = jsfeat.bbf.group_rectangles(rects, 1);
