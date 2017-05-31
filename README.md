@@ -1,16 +1,16 @@
-# BarcodeDetector Polyfill
-Polyfill for BarcodeDetector, part of [shape detection api](https://wicg.github.io/shape-detection-api/)
+# FaceDetector Polyfill
+Polyfill for FaceDetector, part of [shape detection api](https://wicg.github.io/shape-detection-api/)
 
 ## Implementation
-This is basically a Promise wrapper around DecoderWorker from the [JOB](https://github.com/EddieLa/JOB) barcode decoding library.
+Uses the [BBF object detector from JsFeat](https://inspirit.github.io/jsfeat/#bbf).
 
-Note that currently this polyfill enables detection and decoding of 1D barcodes only, 2D barcodes (EG QR-code) might be added in the future using an additional library.
+Note that currently landmarks are not detected.
 
 ## Usage
 ### In the browser
 Install:
 ```
-bower install barcode-detector-polyfill
+bower install face-detector-polyfill
 ```
 
 Use:
@@ -28,11 +28,11 @@ Use:
       };
       document.head.appendChild($script);
     }
-    if (BarcodeDetector in window) {
+    if (FaceDetector in window) {
       continueToStartTheApp();
     } else {
       loadScript(
-        "bower_components/barcode-detector-polyfill/BarcodeDetector.min.js", 
+        "bower_components/face-detector-polyfill/FaceDetector.min.js", 
         continueToStartTheApp
       );
     }
@@ -44,28 +44,26 @@ Use:
 ### With webpack
 Install:
 ```
-npm install --save barcode-detector-polyfill
+npm install --save face-detector-polyfill
 ```
 
 Use:
 ```
-if ('BarcodeDetector' in window) {
+if ('FaceDetector' in window) {
   continueToStartTheApp();
 } else {
-  require.ensure(['barcode-detector-polyfill'], function(require) {
-    const BarcodeDetector = require('barcode-detector-polyfill');
-    window.BarcodeDetector = BarcodeDetector;
+  require.ensure(['face-detector-polyfill'], function(require) {
+    const FaceDetector = require('face-detector-polyfill');
+    window.FaceDetector = FaceDetector;
     continueToStartTheApp();
   }, function(err) {
-    console.log('Failed to load BarcodeDetector', err);
+    console.log('Failed to load FaceDetector', err);
   });
 }
 ```
 
-See [demo](https://www.webpackbin.com/bins/-KlO--0RBOGYZXP0wyrl)
-
 ## Examples
-See the examples folder, or [live demo](https://giladaya.github.io/barcode-detector-polyfill/)
+See the examples folder, or [live demo](https://giladaya.github.io/face-detector-polyfill/)
 
 ## Browser support
 Requires Promises (can also be [polyfilled](https://github.com/stefanpenner/es6-promise)) and typed arrays which are [supported in all modern browsers](http://caniuse.com/#feat=typedarrays), down to IE11.

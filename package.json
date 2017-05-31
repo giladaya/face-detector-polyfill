@@ -47,6 +47,5 @@
   },
   "homepage": "https://github.com/giladaya/face-detector-polyfill",
   "dependencies": {
-    "jsfeat": "0.0.8"
   }
 }

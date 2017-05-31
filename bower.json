@@ -1,8 +1,8 @@
 {
-  "name": "barcode-detector-polyfill",
-  "description": "Polyfill for BarcodeDetector API",
+  "name": "face-detector-polyfill",
+  "description": "Polyfill for FaceDetector API",
   "main": [
-    "dist/BarcodeDetector.min.js"
+    "dist/FaceDetector.min.js"
   ],
   "dependencies": {
   },
@@ -16,7 +16,7 @@
   ],
   "keywords": [
     "shape detect",
-    "barcode",
+    "face",
     "polyfill",
     "webworker",
     "webpack",
@@ -37,10 +37,10 @@
     "test",
     "tests"
   ],
-  "homepage": "https://github.com/giladaya/barcode-detector-polyfill",
+  "homepage": "https://github.com/giladaya/face-detector-polyfill",
   "repository": {
     "type": "git",
-    "url": "https://github.com/giladaya/barcode-detector-polyfill"
+    "url": "https://github.com/giladaya/face-detector-polyfill"
   },
   "private": true
 }
