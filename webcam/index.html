@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Face Detector Polyfill Demo</title>
+    
+    <style>
+      canvas { 
+        margin-top: 10px;
+        width: 100%; 
+        border: 1px solid #DDD; 
+        background: #FAFAFA; 
+      }
+    </style>
+    
+  </head>
+  
+  <body>
+    <div class="container">
+      <canvas id="viewCanvas"></canvas>
+    </div>
+
+    <script src="index.js"></script>
+    <script type="text/javascript">
+      (function () {
+        function loadScript(src, done) {
+          var $script = document.createElement('script');
+          $script.src = src;
+          $script.onload = function() {
+            done();
+          };
+          $script.onerror = function() {
+            done(new Error('Failed to load script ' + src));
+          };
+          document.head.appendChild($script);
+        }
+
+        if ('FaceDetector' in window) {
+          startTheApp();
+        } else {
+          console.log('Loading polyfill');
+          loadScript(
+            "../FaceDetector.js", 
+            startTheApp
+          );
+        }
+      })()
+    </script>
+  </body>
+</html>

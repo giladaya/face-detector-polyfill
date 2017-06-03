@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FaceDetector Polyfill Example</title>
+  </head>
+  <body>
+    <div id="container">
+      <input id="Take-Picture" type="file" accept="image/*;capture=camera" /><br/>
+      <canvas width="320" height="240" id="picture"></canvas>
+      <p id="textbit"></p>
+    </div>
+    <script type="text/javascript">
+      (function () {
+        function loadScript(src, done) {
+          var $script = document.createElement('script');
+          $script.src = src;
+          $script.onload = function() {
+            done();
+          };
+          $script.onerror = function() {
+            done(new Error('Failed to load script ' + src));
+          };
+          document.head.appendChild($script);
+        }
+        if ('FaceDetector' in window) {
+          startTheApp();
+        } else {
+          console.log('Loading polyfill');
+          loadScript(
+            "../FaceDetector.js", 
+            startTheApp
+          );
+        }
+      })()
+
+      function startTheApp() {
+        var takePicture = document.querySelector("#Take-Picture"),
+          showPicture = document.createElement("img"),
+          Result = document.querySelector("#textbit");
+
+        var canvas =document.getElementById("picture");
+        var ctx = canvas.getContext("2d");
+
+        var faceDetector = new FaceDetector({
+          maxDetectedFaces: 100,
+          fastMode: false,
+        });
+
+        function handleResults (result) {
+          if (result.length > 0){
+            ctx.beginPath();
+            ctx.lineWIdth = "2";
+            ctx.strokeStyle="#0f0";
+            for (var i = 0; i < result.length; i++) {
+              ctx.rect(
+                result[i].boundingBox.x, 
+                result[i].boundingBox.y, 
+                result[i].boundingBox.width, 
+                result[i].boundingBox.height
+              );
+            }
+            Result.innerHTML = 'Found ' + result.length + ' faces';
+            ctx.stroke();
+          } else {
+            if(result.length === 0) {
+              Result.innerHTML = "Found nothing.";
+            }
+          }
+        }
+
+        if (takePicture && showPicture) {
+          takePicture.onchange = function (event) {
+            var files = event.target.files;
+            if (files && files.length > 0) {
+              file = files[0];
+              try {
+                var URL = window.URL || window.webkitURL;
+                showPicture.onload = function(event) {
+                  Result.innerHTML="";
+                  // JOB.DecodeImage(showPicture);
+                  ctx.drawImage(showPicture, 0, 0, canvas.width, canvas.height);
+                  faceDetector.detect(canvas).then(handleResults)
+                  URL.revokeObjectURL(showPicture.src);
+                };
+                showPicture.src = URL.createObjectURL(file);
+              }
+              catch (e) {
+                try {
+                  var fileReader = new FileReader();
+                  fileReader.onload = function (event) {
+                    showPicture.onload = function(event) {
+                      Result.innerHTML="";
+                      ctx.drawImage(showPicture, 0, 0, canvas.width, canvas.height);
+                      // JOB.DecodeImage(showPicture);
+                      faceDetector.detect(canvas).then(handleResults)
+                    };
+                    showPicture.src = event.target.result;
+                  };
+                  fileReader.readAsDataURL(file);
+                }
+                catch (e) {
+                  Result.innerHTML = "Neither createObjectURL or FileReader are supported";
+                }
+              }
+            }
+          };
+        }
+      }
+    </script>
+  </body>
+</html>
