@@ -1,6 +1,6 @@
 {
   "name": "face-detector-polyfill",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "description": "Polyfill for FaceDetector API",
   "main": "dist/FaceDetector.js",
   "scripts": {
@@ -38,7 +38,9 @@
     "library",
     "universal",
     "umd",
-    "commonjs"
+    "commonjs",
+    "jsfeat",
+    "bbf",
   ],
   "author": "Gilad Dayagi",
   "license": "MIT",
