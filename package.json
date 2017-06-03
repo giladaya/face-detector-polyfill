@@ -40,7 +40,7 @@
     "umd",
     "commonjs",
     "jsfeat",
-    "bbf",
+    "bbf"
   ],
   "author": "Gilad Dayagi",
   "license": "MIT",
