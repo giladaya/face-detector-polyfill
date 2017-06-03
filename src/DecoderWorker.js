@@ -1,41 +1,30 @@
-/* eslint-disable_ */
-
-// jsfeat.imgproc.grayscale
-
-// jsfeat.matrix_t
-// jsfeat.U8_t
-// jsfeat.C1_t
-
-// jsfeat.bbf.build_pyramid
-// jsfeat.bbf.detect
-// jsfeat.bbf.group_rectangles
-// jsfeat.bbf.face_cascade
-
 var jsfeat = require('./lib/jsfeat');
 var bbfFaceCascade = require('./lib/bbf_face');
 
 let imgU8
 let lastWidth, lastHeight
 
-function init() {
+(function init() {
   jsfeat.bbf.prepare_cascade(bbfFaceCascade);
 
   lastWidth = -1
   lastHeight = -1
-}
-
-init();
+})();
 
 self.onmessage = function (e) {
   if (e.data.width !== lastWidth || e.data.height !== lastHeight) {
     // eslint-disable-next-line new-cap
     imgU8 = new jsfeat.matrix_t(e.data.width, e.data.height, jsfeat.U8_t | jsfeat.C1_t);
+    lastWidth = e.data.width;
+    lastHeight = e.data.height;
   }
   
   const imageData = e.data.image;
   jsfeat.imgproc.grayscale(imageData.data, e.data.width, e.data.height, imgU8);
+
   // possible options
-  jsfeat.imgproc.equalize_histogram(imgU8, imgU8);
+  // jsfeat.imgproc.equalize_histogram(imgU8, imgU8);
+  
   const pyr = jsfeat.bbf.build_pyramid(imgU8, 24 * 2, 24 * 2, 4);
   let rects = jsfeat.bbf.detect(pyr, bbfFaceCascade);
   rects = jsfeat.bbf.group_rectangles(rects, 1);

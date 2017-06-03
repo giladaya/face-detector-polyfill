@@ -9,17 +9,6 @@ const FaceDetectorCallback = (e) => {
   // transform results in e.data.result
   const id = e.data.id
   const resolve = resolves[id]
-  // const results = [
-  //   {
-  //     boundingBox: {
-  //       x: 10,
-  //       y: 20,
-  //       width: 30,
-  //       height: 40,
-  //     },
-  //     landmarks: null
-  //   }
-  // ]
 
   if (resolve !== undefined) {
     const results = e.data.result.map(res => ({
@@ -51,12 +40,10 @@ export default class Library {
 
     this.maxDetectedFaces = config.maxDetectedFaces
     this.maxWorkSize = config.fastMode ? MAX_WORK_SIZE_FAST : MAX_WORK_SIZE_SLOW
-    this.worker = new Worker();
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
 
-    // document.body.appendChild(this.canvas)
-
+    this.worker = new Worker();
     this.worker.onmessage = FaceDetectorCallback
   }
 
